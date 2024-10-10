@@ -20,7 +20,7 @@ jobs:
     - name: Replace in files
       uses: richardrigutins/replace-in-files@v2.1.8
       with:
-        files: '**/*.adoc'
+        files: '*.adoc'
         search-text: '{adoc}'
         replacement-text: 'html'
     # Includes the AsciiDoctor GitHub Pages Action to convert adoc files to html and publish to gh-pages branch
