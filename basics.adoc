@@ -1,0 +1,74 @@
+= Useful basics
+:stem: asciimath
+== Hex in Dezimal
+
+
+[frame=ends]
+|===
+|Dezimal | Hex
+|1
+|1
+
+|2
+|2
+
+|3
+|3
+
+|4
+|4
+
+|5
+|5
+
+|6
+|6
+
+|7
+|7
+
+|8
+|8
+
+|9
+|9
+
+|10
+|a
+
+|11
+|b
+
+|12
+|c
+|13
+|d
+|14
+|e
+|15
+|f
+
+|=== 
+Dezimal 18 = Hex 12
+
+|===
+|Durch 16 | Quotinet(aufgerundet) | Rest | Index
+|18
+|1
+|2
+|0
+
+|1
+|0
+|1
+|1
+|===
+
+Hex 12 = Dezimal 18
+
+[stem]
+++++
+(1 * 16^1) + (2 * 16^0) = 18
+++++
+
+= struct

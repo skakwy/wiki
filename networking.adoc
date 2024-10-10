@@ -1,0 +1,114 @@
+:showtitle:
+:page-navtitle: Networking
+:page-excerpt: Excerpt goes here.
+:page-root: ../../../
+:source-highlighter: CodeRay
+= Arten von Netzwerke
+
+:hexadecimal: link:basics.adoc[Hex in Dezimal]
+
+== Stream sockets (tcp)
+Zuverlässige Sockets bei denen es darauf ankommt, dass die Daten ankommen und auch in der Richtigen reinfolge ankommen.
+
+Anwendungen: +
+
+* telnet
+* ssh
+* http
+
+All diese bauen auf eine Zuverlässige verbindung auf, welche in richtiger Reihenfolge sein muss.
+
+== Datagram sockets (udp) - connectionless
+
+Daten in eine Packet kommen ohne fehler an, jedoch können die Packets nicht in richtiger Reihenfolge und nicht alle ankommen. So werden einfach nur daten an eine ip addresse geschickt ohne eine Richtige Verbindung offen zu halten. Desswegen auch connectionless.
+
+* tftp
+* dhpcd
+
+Diese Protokolle benutzen datagram sockets. Auch wenn diese ebenfalls genaue daten brauchen haben diese jewals ihr eigenes Protokoll um nicht erhaltene daten zu ermitteln und erneeut zu bekommen +
+
+Für spiele ist solch eine Daten zuverlässigkeit egal wesswegen man oft sowas einfach ignoriert. +
+
+Warum sollte man also eine unzuverlässigere verbindung nutzen ? Geschwindigkeit. Datagram sockets sind viel schneller. Für sowas wie die Übermittlung von Nachichten ist ein zuverlässige socket verbindung (tcp) viel besser, aber in einem Spiel wo mehrere male die Position eines Spielers gesendet werden muss ist es nicht Problematisch wenn packets nicht ankommen. Desswegen wird hier dann eine schnellere aber unzuverlässigere Verbindung genutzt. +
+
+== Zusammenfasung
+Welche gibt es ?
+
+* Stream sockets(tcp)
+** Zuverlässig
+** Langsam
+* Datagram sockets(udp)
+** Unzuverlässig
+** Schnell +
+
+
+'''
+
+= OSI-Modell - Netzwerk theorie
+ügendwann mal hier was reinschreiben
+
+'''
+
+= Ip Adressen, structs und Data Munging
+
+== Ipv4 und Ipv6
+Früher ipv4. Heute eher ipv6 wegen zu wenige Ip adressen
+
+
+ipv6 ist in hexadecimal form. {hexadecimal}
+
+ipv6 addressen mit nullen können komprimiert werden:
+
+2001:0db8:c9d2:0012:0000:0000:0000:0051 +
+2001:db8:c9d2:12::51 +
+Auch ipv4 addressen können einfach als ipv6 adressen dargestellt werden: +
+192.168.111.50 +
+::ffff:192.168.111.50
+
+== Subnetze
+Eine netmask gibt vor wie eine Ip addrese im Netzwerk aufgebaut wird. +
+Ist die Ip = 192.168.111.123 und die Netzmaske = 255.255.255.0 so wäre die Ip adresse immer 192.168.111.xxx wobei die letzten drei den Host im Netzwerk beschreiben 
+'''
+
+== Port nummern
+Ports dienen dazu eine Netzwerk verbindung zu einer bestimmten Anwendung zu zuordnen. Beispielsweise wäre die Ip dann die Straße zu einem Hochhaus und der Port die Nummer für die Wohnung. +
+Wenn man zum Beispiel ein Mail und web service hat muss man die einkommenden Daten auch irgendwie zuordnen können. +
+
+Da es viele standard Protokolle gibt, gibt es ebenso standart port nummern die für bestimmte System anwendungen genutzt werden. z.b ssh=22, smtp=25 https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml[List of Ports]
+
+== Byte order
+Es gibt zwei wege eine zwei Byte hex nummer zu Speichern: b34f erst b3 dann 4f. Dies nennt man Big-Endian also in der Richtigen reihenfolge abspeichern. Manche computer (Intel) speichert die Daten andersrum also nach dem Little-Endian system. +
+ +
+Der computer speichert nummern in Host Byte Order, wobei wieder zwischen Little-Endian und Big-Endian unterschieden wird. Desswegen muss sichergestellt werden das, wenn man packete erstellt, diese auch in der Richtigen order sind. +
+ +
+Um das Problem zu lösen wird einfach angenommen das die Host byte order niemals richtig ist und man einfach eine Funktion aufruft um diese in die Richtige Netwrok Byte order bringt. + 
+ +
+Es gibt zwei Arten die Konvertiert werden können. Einmal ein short also zwei byte oder ein long also view Byte. Dementrsprechend heißt dann auch die Funktion also h für host dann to dann n for network und s for short also h-to-n-s
+[source,c]
+----
+htons() // host to netowrk short
+htonl() // host to network long
+ntohs() // network to host short
+ntohl() // network to host long
+----
+
+== structs
+link:basics.adoc[Struct] + 
+Der File descriptor hat einfach den Typ int
+!!hier noch erklärung einfügen
+[,c]
+----
+struct addrinfo {
+    int              ai_flags;     // AI_PASSIVE, AI_CANONNAME, etc.
+    int              ai_family;    // AF_INET, AF_INET6, AF_UNSPEC
+    int              ai_socktype;  // SOCK_STREAM, SOCK_DGRAM
+    int              ai_protocol;  // use 0 for "any"
+    size_t           ai_addrlen;   // size of ai_addr in bytes
+    struct sockaddr *ai_addr;      // struct sockaddr_in or _in6
+    char            *ai_canonname; // full canonical hostname
+
+    struct addrinfo *ai_next;      // linked list, next node
+};
+----
+
+Man kann mit ´ai_fanily´

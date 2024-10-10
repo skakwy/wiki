@@ -1,0 +1,4 @@
+= Math
+:hide-uri-scheme:
+
+https://asciimath.org/
