@@ -1,7 +1,4 @@
-:showtitle:
-:page-navtitle: Networking
-:page-excerpt: Excerpt goes here.
-:page-root: ../../../
+
 :source-highlighter: CodeRay
 = Arten von Netzwerke
 
