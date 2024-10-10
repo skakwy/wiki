@@ -117,7 +117,28 @@ Man kann mit _ai_family_ bestimmen of es sich um _ipv4 ipv6_ handelt oder mit _A
 Wie man sieht ist _ai_addr_ in _addrinfo_ ein pointer zu einem _struct sockaddr_. Hier fängt es dann an ein bisschen komplizierter zu werden. +
 +
 Der struct _sockaddr_ entählt die Information der socket addresse. +
-Um besser mit _struct sockaddr_ umzgehen wurde das struct _sockaddr_in_. Dabei steht in für internet
+Um besser mit _struct sockaddr_ umzgehen wurde das struct _sockaddr_in_. Dabei steht in für internet. Man kann immer _sockaddr_in in _sockaddr_ umwandeln und anders rum. Auch wenn später von connect ein sock_addr gefordert wird kann man einfach _sockaddr_in_ zu einem _sockaddr_in_ casten: _(struct sockaddr*)sockaddr_in_. +
+ +
+[source,c]
+----
+// (IPv4 only--see struct sockaddr_in6 for IPv6)
+
+struct sockaddr_in {
+    short int          sin_family;  // Address family, AF_INET
+    unsigned short int sin_port;    // Port number
+    struct in_addr     sin_addr;    // Internet address
+    unsigned char      sin_zero[8]; // Same size as struct sockaddr
+};
+----
+//#TODO: richtig übersetzen:
+This structure makes it easy to reference elements of the socket address. Note that sin_zero (which is included to pad the structure to the length of a struct sockaddr) should be set to all zeros with the function memset(). Also, notice that sin_family corresponds to sa_family in a struct sockaddr and should be set to “AF_INET”. Finally, the sin_port must be in Network Byte Order (by using htons()!) +
+ +
+ Wie man sieht ist _sin_addr_ vom typ _in_addr_
+ 
+
+
+:hide-uri-scheme:
+Quelle: https://beej.us/guide/bgnet/html//index.html#what-is-a-socket
 
 
 

@@ -29,7 +29,6 @@ jobs:
         # slides_build: true
         # pre_build:
         # post_build:
-    - uses: actions/checkout@v3
     - run: chmod 777 syntax.html && echo "pwn dat syntax"
     - name: Replace in files
       uses: richardrigutins/replace-in-files@v2.1.8
