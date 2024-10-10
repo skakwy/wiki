@@ -109,4 +109,6 @@ struct addrinfo {
 };
 ----
 
-Man kann mit ´ai_fanily´
+
+Man kann mit _ai_family_ bestimmen of es sich um _ipv4 ipv6_ handelt oder mit _AF_UNSPEC_ es sich um beides handeln könnte.
+

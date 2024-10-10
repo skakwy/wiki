@@ -29,6 +29,12 @@ jobs:
         # slides_build: true
         # pre_build:
         # post_build:
+    - name: Replace in files
+      uses: richardrigutins/replace-in-files@v2.1.8
+      with:
+        files:''/'.html'
+        search-text: '{adoc}'
+        replacement-text: 'html'
       env:
         REPO: self
         BRANCH: pages

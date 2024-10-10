@@ -1,9 +1,12 @@
 = wiki für alles zum thema embedded
+:nofooter:
+
+ifdef::
 
 == link:networking.adoc[Networking]
 Was versteht man unter Sockets, ip und ports +
 Wie werden diese umgesetzt
 
-== links:basics.adoc[Useful basics]
+== link:basics.adoc[Useful basics]
 
 simple prinzipien und Grundverständnisse wie z.B das Umwandeln von hex in dezimal und andersrum oder wie ein struct funktioniert/aufgebaut wirds
