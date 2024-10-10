@@ -17,6 +17,7 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v3
+    - run: ls -a
     - run: chmod 777 syntax.html && echo "pwn dat syntax"
     # Includes the AsciiDoctor GitHub Pages Action to convert adoc files to html and publish to gh-pages branch
     - name: asciidoctor-ghpages
