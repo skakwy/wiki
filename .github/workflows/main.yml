@@ -29,3 +29,6 @@ jobs:
         # slides_build: true
         # pre_build:
         # post_build:
+      env:
+        REPO: self
+        BRANCH: pages
