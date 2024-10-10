@@ -29,7 +29,7 @@ jobs:
         # slides_build: true
         # pre_build:
         # post_build:
-    - run: chown 1001:1001 syntax.html && echo "pwn dat syntax"
+    #- run: chown 1001:1001 syntax.html && echo "pwn dat syntax"
     - name: Replace in files
       uses: richardrigutins/replace-in-files@v2.1.8
       with:
