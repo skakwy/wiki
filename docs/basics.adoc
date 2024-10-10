@@ -1,6 +1,6 @@
-= Useful basics
+== Useful basics
 :stem: asciimath
-== Hex in Dezimal
+=== Hex in Dezimal
 
 
 [frame=ends]
@@ -71,4 +71,4 @@ Hex 12 = Dezimal 18
 (1 * 16^1) + (2 * 16^0) = 18
 ++++
 
-= struct
+=== struct
