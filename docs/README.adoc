@@ -1,7 +1,6 @@
 = wiki für alles zum thema embedded
 :nofooter:
 
-ifdef::
 
 == link:networking.adoc[Networking]
 Was versteht man unter Sockets, ip und ports +
