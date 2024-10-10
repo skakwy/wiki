@@ -93,7 +93,7 @@ ntohl() // network to host long
 === structs
 link:basics.adoc[Struct] + 
 Der File descriptor hat einfach den Typ int
-!!hier noch erklärung einfügen
+//#TODO: erklärung hier einfügen
 [,c]
 ----
 struct addrinfo {
@@ -108,7 +108,17 @@ struct addrinfo {
     struct addrinfo *ai_next;      // linked list, next node
 };
 ----
+Diese Struct wird dann mithilfe von _getaddrinfo()_ gefühllt. Desswegen brauch man das meistens gar nicht selber zu erstellen. Trozdem ist es wichtig die einzelne Bestandteile zu verstehen, da man diese lesen und eventuell auch selber ändern muss.
+//#TODO: nochmal überdenken
+ +
+ +
+Man kann mit _ai_family_ bestimmen of es sich um _ipv4 ipv6_ handelt oder mit _AF_UNSPEC_ es sich um beides handeln könnte. +
+ +
+Wie man sieht ist _ai_addr_ in _addrinfo_ ein pointer zu einem _struct sockaddr_. Hier fängt es dann an ein bisschen komplizierter zu werden. +
++
+Der struct _sockaddr_ entählt die Information der socket addresse. +
+Um besser mit _struct sockaddr_ umzgehen wurde das struct _sockaddr_in_. Dabei steht in für internet
 
 
-Man kann mit _ai_family_ bestimmen of es sich um _ipv4 ipv6_ handelt oder mit _AF_UNSPEC_ es sich um beides handeln könnte.
+
 
