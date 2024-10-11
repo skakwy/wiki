@@ -1,0 +1,61 @@
+== Grundwissen zum Thema Bussystemen
+
+=== Datenbus Topologien
+Es werden Grundlegen in verschiedenen Busstrukturen unterschieden, diese geben an wie die Steuergerät inherhalb des Busses verbunden sind und kommunizieren. Es wird unterschieden in: +
+
+* Sterntopologie
+* Ringtopologie
+* Linientopologie(oder auch Bustopologie)
+* Daisy chain
+* Flexray / Baumtopologie
+
+Unterscheiden tun sich diese Topologien schlussendlich in den übertragungsgeschwindigkeiten, der ausfallsicherheit und den zum senden berechtigten steuergeräten.
+
+=== Grundlegende Bussysteme mit den Topologien
+
+==== LIN-Bus / Sterntopologie
+LIN-Bus(Local Interconnect Network) ist eine Bussystem, welches in einem Stern angeordnet ist.
+In der Mitte befindet sich ein Mastersteuergerät, welcher mit bis zu 16 Slaves verbunden werden kann. Die Slaves können aktoren und Sensoren sein.
+Slaves sind selber nicht sende Berechtigt. Der Master ist mit den Slaves über eine Leitung verbunden und Dementsprechend anfällig. Die Kommunikationsspannung liegt bei 12V und die übertragungsrate liegt bei ca. 20kBit/s.
+
+==== MOST-BUS / Ringtopologie
+Im MOST-Bus(MOST-Bus = Media Oriented System Transport) sind alle Steuergeräte in einem Kreis verbunden. Die Datenübermittlung verläuft in eine Richtung, welche vorbestimmt ist.
+Dies hat die folge, dass jedes Steurgerät alle information bekommt und weiter schickt, wenn diese nicht für das Steuergerät relevant sind. Bei einer Leitungsunterbrechung fällt das ganze System aus. Die Fehler suche ist dementsprechend Schwieriger gestaltet, da Einzelne Steuergeräte überbrückt werden müssen umd die Fehlerquelle ein zu schränken.
+Meist werden für die Verbindung der Steuergeräte LWL (lichtwellenleiter) verwendet, da diese einen höhere übertragungsrate haben.
+Er wird wegen seiner hohen anfälligkeit aber auch wegen der hohen datenübertragungsrate für Media (Video-, Sprach-, Datensignalen) anwengungen genutzt. Die übertragungsrate beträgt bis zu 21,2 MBit/s.
+
+==== CAN-Bus Linientopologie (Bustopologie)
+Der CAN-Bus(Controller Area Network) ist ein Datenbus wo viel Wert auf übertragungssicherheit und ausfallsicherheit gelegt wird. deswegen sind alle Steuergeräte mit den gleichen High und Low pegeln verbunden. Die High und Low Pegel sind miteinander verdrillt und jeweils an den Enden mit 120 Ohm Widerständen verbunden. Durch die Wiederstände werden Reflextionen aufgehoben und damit eine störung der übertragung verhindert. + Der Bus arbeitet mit Spannungspegeln zwischen Low: 2,5V - 1,5V und high: 2,5V - 3,5V. Die Rezessive spannung beträgt 2,5V und im Dominanten pegel (0) gehen die Spannungen auseinander, das eine Differenz (Hub) von 2V ensteht +
+Bei kurzschluss zwischen den Leitungen wird auf beiden das High Signal gesendet.
+
+==== Daisy chain (nicht ganz sicher)
+Daisy chain ist eine reihenverbindung zwischen den steuergeräten. Die Anzahl der leitungen kann erhöht werden und damit auch die Übertragungsrate. Das System spart insgesamt an Leitungen ist jedoch ggf. auch anfälliger aus zu fallen.
+
+==== Flexray / Baumtopologie (nicht ganz sicher)
+Eine Flexraytopologie kann sehr unterschiedlich aussehen. Sie beschreibt eine mischung der einzelnen Topologien je nach anwendungsfall. Da die Systeme unterschiedliche Geschwindigkeiten und spannungen haben können, wird ein Gateway benötigt, um eine Kommunikation zwischen den Systemen her zu stellen. Die Knotenpunkte der Systeme werden Quasi verbunden
+
+=== Abitrierung
+Abitrierun legt fest wie wichtig ein Steuergerät bzw. seine zu schickende Nachricht ist. Je wichtiger desto mehr Dominante pegel hat er am anfang seiner Botschaft. Dominant ist eine 0 mit einem niedrigem Pegel/Spannung. Keine Spannung ist schneller zu senden als eine höhere spannung.
+
+=== Asy-/Syn- chone Datenübertragung
+Synchron: Es wird unabhängig von der Relevant der Informaiton regelmäßig gesendet nach einem Festenablauf. Ein Steuergerät sendet oder Empfängt
+
+Asynchron: Je nachdem welches Steuergerät die relevantesten Information hat, darf zu erst senden, dies wird mit der Abitrierung fest gelegt. Die Steuergeräte müssen gleichzeitig senden und empfangen können. Es gibt keine Fest gelegte sendereihnfolge. Wenn kein Steuergerät eine neue information hat wird die letzte wiederholt.
+
+=== Aufbau einer Botschaft
+
+. Anfangsfeld:Kennzeichnet den Anfang einer Nachricht.
+. Statusfeld:Angabe der Datenart und dessen Priorität. Wollen z.B. zwei Steuergeräte gleichzeitig ihr Datenprotokoll senden, hat das mit höherer Priorität Vorrang. (Identifier)
+. RTR: Kennzeichnet, ob Daten angefordert oder gesendet werden.
+. Kontrollfeld: Hier steht die Anzahl der im Datenfeld stehenden Informationen. So kann jeder Empfänger überprüfen, ob er alle Informationen empfangen hat.
+. Datenfeld: Dort sind die Informationen für die anderen Steuergeräte enthalten.
+. Sicherungsfeld: Es dient zur Erkennung von Übertragungsfehlern. Wird ein Fehler erkannt, teilen sie dies dem Sender sofort mit. Daraufhin wiederholt der Sender seine Übertragung.
+. Bestätigungsfeld: In diesem Feld wird der korrekte Empfang vom Empfänger bestätigt.
+. Endefeld: Kennzeichnet das Ende einer Nachricht.
+. Ruhezustand:Ruhezustand auf dem CAN-Bus bis zur nächsten Botschaft.
+
+=== Start des systems
+Coldstarter Steuergerät wird zu erst gestartet. Dieser Kommuniziert dann mit den following Coldstartern. Wenn alle soweit hochgefahren sind, werden die anderen Steuergeräte geweckt.
+
+
+//#TODO:Bilder über Spannungspegel einfügen
