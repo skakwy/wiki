@@ -34,6 +34,7 @@ jobs:
     needs: build
     runs-on: ubunut-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Replace multiple files
         uses: richardrigutins/replace-in-files@v2
         with:
