@@ -31,6 +31,7 @@ jobs:
         REPO: self
         BRANCH: pages
   replace:
+    needs: build
     runs-on: ubunut-latest
     steps:
       - name: Replace multiple files
