@@ -10,7 +10,6 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
     runs-on: ubuntu-latest
     steps:
@@ -28,7 +27,7 @@ jobs:
         # pre_build:
         # post_build:
     #- run: chown 1001:1001 syntax.html && echo "pwn dat syntax"
-     env:
+      env:
         REPO: self
         BRANCH: pages
   replace:
