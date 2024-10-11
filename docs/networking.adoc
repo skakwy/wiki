@@ -150,7 +150,34 @@ struct in6_addr {
     unsigned char   s6_addr[16];   // IPv6 address
 };
 ----
+//#TODO:ipv6 erklären
+Ipv6 wird erstmal ausgelassen
+//#TODO: das hier übersetzen und erklären
+Last but not least, here is another simple structure, struct sockaddr_storage that is designed to be large enough to hold both IPv4 and IPv6 structures. See, for some calls, sometimes you don’t know in advance if it’s going to fill out your struct sockaddr with an IPv4 or IPv6 address. So you pass in this parallel structure, very similar to struct sockaddr except larger, and then cast it to the type you need:
 
+struct sockaddr_storage {
+    sa_family_t  ss_family;     // address family
+
+    // all this is padding, implementation specific, ignore it:
+    char      __ss_pad1[_SS_PAD1SIZE];
+    int64_t   __ss_align;
+    char      __ss_pad2[_SS_PAD2SIZE];
+};
+
+What’s important is that you can see the address family in the ss_family field—check this to see if it’s AF_INET or AF_INET6 (for IPv4 or IPv6). Then you can cast it to a struct sockaddr_in or struct sockaddr_in6 if you wanna. +
+
+=== Ip adressen und part deux
+Um eine Ip adresse umzuwandeln brauch man lediglich die funktion _inet_pton()_, welche eine Ip addresse in ein _struct in_addr_ oder ein _struct in6_addr_ umwandelt:
+[source,c]
+----
+struct sockaddr_in sa;  //Ipv4
+struct sockaddr_in sa6; //Ipv6
+
+inet_pton(AF_INET, "10.12.110.57", &(sa.sin_addr)); // IPv4
+inet_pton(AF_INET6, "2001:db8:63b3:1::3490", &(sa6.sin6_addr)); // IPv6
+----
+
+ +
 :hide-uri-scheme:
 Quelle: https://beej.us/guide/bgnet/html//index.html#what-is-a-socket
 
