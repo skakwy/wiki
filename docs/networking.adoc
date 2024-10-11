@@ -1,6 +1,8 @@
 :source-highlighter: Highlight.js
 == Networking
-
+:toc:
+:toc-title: Übersicht
+:toclevels: 4
 === Arten von Sockets
 
 :hexadecimal: link:basics.adoc[Hex in Dezimal]
