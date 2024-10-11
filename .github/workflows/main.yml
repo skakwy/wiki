@@ -18,13 +18,6 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v3
     - run: ls -a
-    - name: Replace multiple files
-      uses: richardrigutins/replace-in-files@v2
-      with:
-        files: '**/*.adoc'
-        search-text: '.adoc'
-        replacement-text: '.html'
-        encoding: 'utf8'
     # Includes the AsciiDoctor GitHub Pages Action to convert adoc files to html and publish to gh-pages branch
     - name: asciidoctor-ghpages
       uses: manoelcampos/asciidoctor-ghpages-action@v2
@@ -37,12 +30,16 @@ jobs:
         # pre_build:
         # post_build:
     #- run: chown 1001:1001 syntax.html && echo "pwn dat syntax"
+     env:
+        REPO: self
+        BRANCH: pages
+  replace:
     - name: Replace multiple files
       uses: richardrigutins/replace-in-files@v2
       with:
-        files: '**/*.adoc'
-        search-text: '.html'
-        replacement-text: '.adoc'
+        files: '**/*.html'
+        search-text: '.adoc'
+        replacement-text: '.html'
         encoding: 'utf8'
 
     - name: Add highlight.js
