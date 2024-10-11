@@ -409,13 +409,13 @@ Wie man sieht benutzen wir hier _bind_ nicht, da es nicht wichtig ist welchen lo
 Der lokale port wird uns dann vom system automatisch zugewiesen.
 
 === _listen()_ - Kann mich bitte jemand rufen ?
-Wenn man auf einkommende verbindungen warten möchte muss man _listen()_ und _<<accept_id,acept()>>_ verwenden.
+Wenn man auf einkommende verbindungen warten möchte muss man _listen()_ und _<<accept_id,accept()>>_ verwenden.
 _listen()_ ist wie folgt aufgebaut:
 [source,c]
 ----
 int listen(int sockfd, int backlog);
 ----
-_sockfd_ ist wieder der Socket descriptor und backglog ist die erlaubte Anzahl an eingehende verbindung in der Connection queue, welche solange warten bis sie mit _<<accept_id,acept()>>_ akzeptiert werden.
+_sockfd_ ist wieder der Socket descriptor und backglog ist die erlaubte Anzahl an eingehende verbindung in der Connection queue, welche solange warten bis sie mit _<<accept_id,accept()>>_ akzeptiert werden.
 Die meisten system erlauben eine maximale Anzahl von 20, aber 5 oder 10 sollte ausreichend sein.
 
 So wie üblich gibt listen -1 zurrück wenn ein Fehler aufgetreten ist und setzt die Variable errno.
@@ -430,7 +430,7 @@ bind();
 listen();
 /* accept() goes here */
 ----
-Der schwierige part dabei ist das _<<accept_id,acept()>>_ aber da kommen wir jetzt zu.
+Der schwierige part dabei ist das _<<accept_id,accept()>>_ aber da kommen wir jetzt zu.
 
 === _accept()_ - Danke das du 3490 gewählt hast [[accept_id]]
 Nehmen wir mal an jemand von weiter weg will sich mit _<<connect_id,connect()>>_ mit deinem Computer mit einem bestimmten Port verbinden. Seine connection wird dann in die connection queue eingefügt und wartet darauf
