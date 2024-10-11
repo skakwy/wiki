@@ -58,4 +58,4 @@ jobs:
           encoding: 'utf8'
         env:
           REPO: self
-          BRANCH: pages
+          BRANCH: gh-pages
