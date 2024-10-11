@@ -1,7 +1,7 @@
 :source-highlighter: Highlight.js
 == Networking
 
-=== Arten von Netzwerke
+=== Arten von Sockets
 
 :hexadecimal: link:basics.adoc[Hex in Dezimal]
 
@@ -16,7 +16,7 @@ Anwendungen: +
 
 All diese bauen auf eine Zuverlässige verbindung auf, welche in richtiger Reihenfolge sein muss.
 
-=== Datagram sockets (udp) - connectionless
+=== Datagram sockets (udp) - connectionless [[datagram_socket_id]]
 
 Daten in eine Packet kommen ohne fehler an, jedoch können die Packets nicht in richtiger Reihenfolge und nicht alle ankommen. So werden einfach nur daten an eine ip addresse geschickt ohne eine Richtige Verbindung offen zu halten. Desswegen auch connectionless.
 
@@ -92,7 +92,7 @@ ntohl() // network to host long
 
 === structs
 link:basics.adoc[Struct] + 
-Der File descriptor hat einfach den Typ int
+Der Socket descriptor hat einfach den Typ int
 //#TODO: erklärung hier einfügen
 [,c]
 ----
@@ -167,7 +167,7 @@ struct sockaddr_storage {
 What’s important is that you can see the address family in the ss_family field—check this to see if it’s AF_INET or AF_INET6 (for IPv4 or IPv6). Then you can cast it to a struct sockaddr_in or struct sockaddr_in6 if you wanna. +
 
 === Ip adressen und part deux
-Um eine Ip adresse umzuwandeln brauch man lediglich die funktion _inet_pton()_, welche eine Ip addresse in ein _struct in_addr_ oder ein _struct in6_addr_ umwandelt:
+Um eine Ip adresse umzuwandeln brauch man lediglich die funktion _inet_pton()_, welche eine Ip addresse in ein _struct in_addr_ oder ein _struct in6_addr_ umwandelt. Dabei steht pton für presentation to network:
 [source,c]
 ----
 struct sockaddr_in sa;  //Ipv4
@@ -176,8 +176,364 @@ struct sockaddr_in sa6; //Ipv6
 inet_pton(AF_INET, "10.12.110.57", &(sa.sin_addr)); // IPv4
 inet_pton(AF_INET6, "2001:db8:63b3:1::3490", &(sa6.sin6_addr)); // IPv6
 ----
+(Früher gab es die Funktion _inet_addr()_ oder _inet_aton()_ aber die werden nicht mehr benutzt und funktionieren auch nicht mit Ipv6) + 
 
- +
+Um das ganze Robuster zu machen muss man noch auf error achten. _inet_aton_ gibt -1 bei einem Fehler wieder und 0 wenn die ip addresse nicht richtig ist. Also bevor man das benutzt sollte man checken ob der Rückgabewert größer als null ist. +
+
+Logischer weise kann man dann mit der Funktion _inet_ntop()_ dann ein struct in_addr in ein string(char*) umwandeln, dabei wird wieder zwischen ipv6 und ipv4 unterschieden:
+[source,c]
+----
+// IPv4:
+
+char ip4[INET_ADDRSTRLEN];  // space to hold the IPv4 string
+struct sockaddr_in sa;      // pretend this is loaded with something
+
+inet_ntop(AF_INET, &(sa.sin_addr), ip4, INET_ADDRSTRLEN);
+
+printf("The IPv4 address is: %s\n", ip4);
+
+
+// IPv6:
+
+char ip6[INET6_ADDRSTRLEN]; // space to hold the IPv6 string
+struct sockaddr_in6 sa6;    // pretend this is loaded with something
+
+inet_ntop(AF_INET6, &(sa6.sin6_addr), ip6, INET6_ADDRSTRLEN);
+
+printf("The address is: %s\n", ip6);
+----
+
+_INET_ADDRSTRLEN_ bzw _INET6_ADDRSTRLEN_ ist einfach die maximale länge einer addresse. (Die alte funktion dafür war _inet_ntoa()_ wird nicht mehr benutzt) +
+
+Diese funktionen funktionieren nur mit numerischen Ip adressen, somit werden hostnames wie "www.google.de" nicht akzeptiert. Das wird mit getaddrinfo() gemacht, aber dazu kommen wir erst später.
+//#TODO:Add reference to function
+
+=== Private Netzwerke
+
+In den Meisten Netzwerken gibt es eine Firewall, welche einerseits dazu dient das locale Netzwerk zu schützen als auch die Ip addressen innerhalb zu ip adressen auserhalb zu bersetzen. Dies wird _Network Adress Translation_ oder auch NAT genannt.
+
+Für üns spielt das aber an sich keine Rolle da das Automatisch gemacht wird. So bietet sich die Möglichkeit ein lokales Netwerk sicherer zu machen und besser aufzubauen. So gibt es auch bestimmte konventionen wie diese aufgebaut sind. Am häufigsten sind jedoch 10.x.x.x, 192.168.x.x, wobei für x 0-255 gilt und ein weniger normale ist 172.y.x.x, wobei für y 16-31 gilt https://datatracker.ietf.org/doc/html/rfc1918[hier].
+
+Netzwerke müssen so nicht aufgebaut sein, normalerweise sind sie es aber.
+
+Lokale Netwerke spielen vorallem eine wichtige Rolle, da man vom ISP (internet anbieter) nur eine gewisse Anzahl an öffentlichen IP addressen zugeordnet bekommt. Und man ohne lokales Netzwerk nur dementrsprechend viele geräte im Netwerk haben können.
+
+=== Wechsel von Ipv4 auf IPv6
+//#TODO:beschreiben wie das geht
+
+== System calls
+
+=== _getaddrinfo()_ - Ein Anfang
+_getaddrinfo()_ ist eine der Wichtigsten funktionen da diese uns dabei hilf unsere structs zu füllen und hilft uns mit DNS und service name lookups.
+
+Wie ist die Funktion aufgebaut ?
+[source,c]
+----
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+
+int getaddrinfo(const char *node,     // e.g. "www.example.com" or IP
+                const char *service,  // e.g. "http" or port number
+                const struct addrinfo *hints,
+                struct addrinfo **res);
+----
+Der _node_ Parameter ist einfach der hostname zu dem man sich verbinden will, z.B www.google.de.
+ _serivce_ kann entweder ein service sein (der https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml[hier] 
+ beschrieben wird oder der bei UNIX machine unter _/etc/services_ steht) aber auch ein Port.
+
+Für _hints_ muss man lediglich ein _struct addrinfo_ mit den nötigsten Informationen ausfüllen.
+Als Beispiel nehmen wir einen server der sich mit der hostip und dem port 3490 verbinden möchte. (Das beispiel umfasst nur die erstellung der structs)
+[source,c]
+----
+int status;
+struct addrinfo hints;
+struct addrinfo *servinfo;  // will point to the results
+
+memset(&hints, 0, sizeof hints); // make sure the struct is empty
+hints.ai_family = AF_UNSPEC;     // don't care IPv4 or IPv6
+hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
+hints.ai_flags = AI_PASSIVE;     // fill in my IP for me
+
+if ((status = getaddrinfo(NULL, "3490", &hints, &servinfo)) != 0) {
+    fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
+    exit(1);
+}
+
+// servinfo now points to a linked list of 1 or more struct addrinfos
+
+// ... do everything until you don't need servinfo anymore ....
+
+freeaddrinfo(servinfo); // free the linked-list
+----
+Da _ai_family_ den Wert _AF_UNSPEC_ hat sagen wir quasi das es egal ist ob ipv4 oder ipv6.
+
+Hier nochmal ein Beispiel für einen Client der sich mit einen Server verbinden will:
+[source,c]
+----
+int status;
+struct addrinfo hints;
+struct addrinfo *servinfo;  // will point to the results
+
+memset(&hints, 0, sizeof hints); // make sure the struct is empty
+hints.ai_family = AF_UNSPEC;     // don't care IPv4 or IPv6
+hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
+
+// get ready to connect
+status = getaddrinfo("www.example.net", "3490", &hints, &servinfo);
+
+// servinfo now points to a linked list of 1 or more struct addrinfos
+
+// etc.
+----
+
+=== _socket()_ - Socket descriptor
+Jetzt wird es zeit über den socket() system call zu reden.
+
+[source,c]
+----
+#include <sys/types.h>
+#include <sys/socket.h>
+
+int socket(int domain, int type, int protocol); 
+----
+Hier muss man angeben welche art von Socket man braucht. Also Ipv4 oder Ipv6, stream or datagram und TCP oder {last-update-label}
+
+Füher wurde das alles gehardcoded, aber da wir _getaddrinfo()_ haben geht das ganze viel einfacher.
+[source,c]
+----
+int s;
+struct addrinfo hints, *res;
+
+// do the lookup
+// [pretend we already filled out the "hints" struct]
+getaddrinfo("www.example.com", "http", &hints, &res);
+
+//hier sollte man immer nach error checken für getaddrinfo
+
+s = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+----
+Socket gibt entweder ein Socket descriptor wieder den man dann später benutzen kann oder -1 wenn ein Fehler aufgetreten ist.
+(Den fehler selbst kann man dann mit _errno_ nachgucken [siehe hier])
+//#TODO:add reference
+
+=== _bind()_ - Auf welchem Port bin ich ?
+Wenn man ein Socket hat muss man diesen auch noch mit einem port mit dem eigenen Pc verbinden. Wenn man nur ein _connect()_ macht ist bind nicht nötig.
+Wichitg ist das z.B für spiele wenn man eine Verbindung zu einem bestimmten host aufbaun soll mit einem bestimmten port damit das system die Daten zu dem richtigen Socket descriptor zuordnen kann.
+
+Bind ist wie folgt aufgebaut:
+[source,c]
+----
+include <sys/types.h>
+#include <sys/socket.h>
+
+int bind(int sockfd, struct sockaddr *my_addr, int addrlen);
+----
+_sockfd_ ist der Socket Socket descriptor. _my_addr_ is einfach ein pointer zu einem _struct sockaddr_, welcher die informationen über die adresse, port und Ip adresse entählt.
+_addrlen_ is einfach die Länge in bytes der adresse.
+Ein beispiel das ein Socket zu einem host binden mit dem port 3490:
+[source,c]
+----
+struct addrinfo hints, *res;
+int sockfd;
+
+// first, load up address structs with getaddrinfo():
+
+memset(&hints, 0, sizeof hints);
+hints.ai_family = AF_UNSPEC;  // use IPv4 or IPv6, whichever
+hints.ai_socktype = SOCK_STREAM;
+hints.ai_flags = AI_PASSIVE;     // fill in my IP for me
+
+getaddrinfo(NULL, "3490", &hints, &res);
+
+// make a socket:
+
+sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+
+// bind it to the port we passed in to getaddrinfo():
+
+bind(sockfd, res->ai_addr, res->ai_addrlen);
+----
+//#TODO:verstehen
+By using the AI_PASSIVE flag, I’m telling the program to bind to the IP of the host it’s running on. If you want to bind to a specific local IP address, drop the AI_PASSIVE and put an IP address in for the first argument to getaddrinfo().
+
+bind() also returns -1 on error and sets errno to the error’s value.
+
+Wichtig ist zu beachten das, wenn man bind() benutzt man nur ports über 1024 benutzt, da diese alle *reserviert* sind.
+So kann man alle ports ab 1024 bis 65535 benutzen, so lange sie nicht von anderen Programmen benutzt werden.
+
+=== _connect()_ [[connect_id]]
+_connect()_ ist wie folgt aufgebaut:
+
+[source,c]
+----
+#include <sys/types.h>
+#include <sys/socket.h>
+
+int connect(int sockfd, struct sockaddr *serv_addr, int addrlen); 
+----
+
+_sockfd_ ist der Socket descriptor, _serv_addr_ ist ein struct vom typ _struct sockaddr_ der den destination port und Ip adresse entählt und _addrlen_ ist die länge in bytes von der server adressen strukutr.
+
+All die Parameter können wieder mit hilfe von _getaddrinfo()_ gesetzt werden.
+
+Als Beispiel machen wir jetzt eine socket connection zu dem "www.example.com" mit dem Port 3490.
+
+[source,c]
+----
+struct addrinfo hints, *res;
+int sockfd;
+
+// first, load up address structs with getaddrinfo():
+
+memset(&hints, 0, sizeof hints);
+hints.ai_family = AF_UNSPEC;
+hints.ai_socktype = SOCK_STREAM;
+
+getaddrinfo("www.example.com", "3490", &hints, &res);
+
+// make a socket:
+
+sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+
+// connect!
+
+connect(sockfd, res->ai_addr, res->ai_addrlen);
+----
+
+Hier muss man auch wieder darauf achten nach fehlern zu checken. _connect()_ gibt -1 wieder bei einem Fehler und setzt die Variable _errno_.
+
+Wie man sieht benutzen wir hier _bind_ nicht, da es nicht wichtig ist welchen lokalen port nummer wir benutzen weil es nur wichtig ist welchen host port wir benutzen.
+Der lokale port wird uns dann vom system automatisch zugewiesen.
+
+=== _listen()_ - Kann mich bitte jemand rufen ?
+Wenn man auf einkommende verbindungen warten möchte muss man _listen()_ und _<<accept_id,acept()>>_ verwenden.
+_listen()_ ist wie folgt aufgebaut:
+[source,c]
+----
+int listen(int sockfd, int backlog);
+----
+_sockfd_ ist wieder der Socket descriptor und backglog ist die erlaubte Anzahl an eingehende verbindung in der Connection queue, welche solange warten bis sie mit _<<accept_id,acept()>>_ akzeptiert werden.
+Die meisten system erlauben eine maximale Anzahl von 20, aber 5 oder 10 sollte ausreichend sein.
+
+So wie üblich gibt listen -1 zurrück wenn ein Fehler aufgetreten ist und setzt die Variable errno.
+
+In diesem fall muss man auch bind benutzten damit der client weiß zu welchem Port sie sich verbinden sollen bzw. damit dieser einheitlich ist und nicht zufällig zugehordnet wird, wie es ohne bind der Fall wäre.
+So muss die Sequenz der System calls wie folgt aussehen:
+[source,c]
+----
+getaddrinfo();
+socket();
+bind();
+listen();
+/* accept() goes here */
+----
+Der schwierige part dabei ist das _<<accept_id,acept()>>_ aber da kommen wir jetzt zu.
+
+=== _accept()_ - Danke das du 3490 gewählt hast [[accept_id]]
+Nehmen wir mal an jemand von weiter weg will sich mit _<<connect_id,connect()>>_ mit deinem Computer mit einem bestimmten Port verbinden. Seine connection wird dann in die connection queue eingefügt und wartet darauf
+aktzeptiert zu werden mit hilfe von _accept()_. _accept()_ gibt dann ein neuen Socket descriptor nur für die einzelne Verbindung zurrück. Mit dem neuen Socket descriptor können wir dann _<<send_id,send()>>_ und _<<recieve_id,recv()>>_ benutzen.
+
+[source,c]
+----
+_accpet()_ sieht wie folgt aus:
+#include <sys/types.h>
+#include <sys/socket.h>
+
+int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+----
+_sockdf_ ist der _listen()_ Socket descriptor. _addr_ ist normalerweise ein pointer zu einem localen _struct sockaddr_storage_, wo die Informationen über die einkommende Verbindung gespeichert werden._addrlen_ ist ein localer integer welcher zu _sizeof(struct sockaddr_storage)_ gesetzt werden sollte, bevor man _accept()_ aufruft.
+
+So wie üblich gibt _accept()_ eine -1 bei einem Fehler wieder und setzt die ernno variable.
+
+Hier ein kleines Beispiel *ohne* error checking:
+[source,c]
+----
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+
+#define MYPORT "3490"  // the port users will be connecting to
+#define BACKLOG 10     // how many pending connections queue will hold
+
+int main(void)
+{
+    struct sockaddr_storage their_addr;
+    socklen_t addr_size;
+    struct addrinfo hints, *res;
+    int sockfd, new_fd;
+
+    // !! don't forget your error checking for these calls !!
+
+    // first, load up address structs with getaddrinfo():
+
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC;  // use IPv4 or IPv6, whichever
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_PASSIVE;     // fill in my IP for me
+
+    getaddrinfo(NULL, MYPORT, &hints, &res);
+
+    // make a socket, bind it, and listen on it:
+
+    sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+    bind(sockfd, res->ai_addr, res->ai_addrlen);
+    listen(sockfd, BACKLOG);
+
+    // now accept an incoming connection:
+
+    addr_size = sizeof their_addr;
+    new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &addr_size);
+----
+Wenn man nur eine Verbindung erwartet dann kann _sockfd_ mit close auch wieder geschlossen werden
+
+=== _send()_ und _recv()_ - Kommunikation zwischen client und server
+Diese beide Funktionen sind essentiel für die Verbindung ziwschen client und server.
+Für <<datagram_socket_id, unconnected datagram sockets>> sind andere Funktionen wichtig. Die Funktionen <<sendto_id,_sendto()_>> und <<recvfrom_id,_recvfrom()_>>.
+
+==== _send()_ [[send_id]]
+
+Aufbau:
+[source,c]
+----
+int send(int sockfd, const void *msg, int len, int flags);
+----
+_sockfd_ ist der Socket descriptor der benutzt werden soll um die Daten zu senden. _msg_ ist ein pointer zu den Daten die man senden will und len ist die länge der Daten in bytes die gesendet werden sollen.
+_flags_ kann einfach zu 0 gesetzt werden.
+//#TODO: welche anderen flags gibt es ?
+
+Beispiel:
+[source,c]
+----
+char *msg = "Beej was here!";
+int len, bytes_sent;
+.
+.
+.
+len = strlen(msg);
+bytes_sent = send(sockfd, msg, len, 0);
+----
+Wichtig zu wissen ist, dass send nur so viel daten schickt wie es möglich ist und somit die rückgabe also _bytes_send_
+kleiner sein könnte als die Länge die man angegeben hat. Desswegen muss man die restlichen daten, wenn übrig nochmal senden.
+Aber ein packet das kleiner als 1K ist sollte kein Problem darstellen.
+
+Hier auch wieder bei -1 als Rückgabe ist ein Fehler aufgetreten und errno wird ebenfalls gesetzt.
+
+==== _recv()_ [[recieve_id]]
+_recv()_ ist relativ gleich aufgebaut:
+[source,c]
+int recv(int sockfd, void *buf, int len, int flags);
+
+_sockfd_ ist der socket descriptor von dem gelesen werden soll, _buf_ ist der buffer in dem die gelesen Information gespeichert wird.
+_len_ ist die maximale länge des buffers,_flags_ kann hier auch einfach wieder auf 0 gesetzt werden.
+
+_recv()_ gibt die tatsächliche größe der gelesen bytes wieder.
+
+Hier auch wieder bei -1 als Rückgabe ist ein Fehler aufgetreten und errno wird ebenfalls gesetzt.
+
+== _sendto() und recvfrom() - Kommunikation mit connectionless Sockets
+
 :hide-uri-scheme:
 Quelle: https://beej.us/guide/bgnet/html//index.html#what-is-a-socket
 
