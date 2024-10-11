@@ -31,12 +31,12 @@ jobs:
         # post_build:
     #- run: chown 1001:1001 syntax.html && echo "pwn dat syntax"
     - name: Replace multiple files
-    uses: richardrigutins/replace-in-files@v2
-    with:
-      files: '**/*.html'
-      search-text: 'adoc'
-      replacement-text: 'html'
-      encoding: 'utf8'
+      uses: richardrigutins/replace-in-files@v2
+      with:
+        files: '**/*.html'
+        search-text: 'adoc'
+        replacement-text: 'html'
+        encoding: 'utf8'
       env:
         REPO: self
         BRANCH: pages
