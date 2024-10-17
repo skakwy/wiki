@@ -26,13 +26,12 @@ jobs:
         # slides_build: true
         # pre_build:
         # post_build:
-    #- run: chown 1001:1001 syntax.html && echo "pwn dat syntax"
       env:
         REPO: self
         BRANCH: pages
   replace:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ${{needs.build.outputs.RUNNER}}
     steps:
       - uses: actions/checkout@v3
       - name: Replace multiple files
