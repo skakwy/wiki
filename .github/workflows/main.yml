@@ -31,7 +31,7 @@ jobs:
         BRANCH: pages
   replace:
     needs: build
-    runs-on: ${{needs.build.outputs.RUNNER}}
+    runs-on: ${{needs.asciidoctor-ghpages.outputs.RUNNER}}
     steps:
       - uses: actions/checkout@v3
       - name: Replace multiple files
