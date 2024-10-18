@@ -26,9 +26,6 @@ jobs:
         # slides_build: true
         # pre_build:
         # post_build:
-      env:
-        REPO: self
-        BRANCH: pages
   replace:
     needs: build
     runs-on: ubuntu-latest
@@ -59,6 +56,4 @@ jobs:
             <script>hljs.highlightAll();</script>
             </head>
           encoding: 'utf8'
-        env:
-          REPO: self
-          BRANCH: gh-pages
+      - uses: stefanzweifel/git-auto-commit-action@v5
