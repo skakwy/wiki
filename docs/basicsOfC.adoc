@@ -1,9 +1,7 @@
 
 == Datentypen:
 image:img/dataTypes.png[]
-short int = 2
-int = 2 bis 4 | abhänig vom system
-long int = 4
+
 
 == Operatoren und Kommentare
 
