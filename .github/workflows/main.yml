@@ -34,6 +34,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          repository: 'gh-pages'
       - name: Replace multiple files
         uses: richardrigutins/replace-in-files@v2
         with:
@@ -55,7 +57,6 @@ jobs:
             <script>hljs.highlightAll();</script>
             </head>
           encoding: 'utf8'
-    env:
-      REPO: self
-      BRANCH: gh-pages
-      MESSAGE: "replaced html files"
+        env:
+          REPO: self
+          BRANCH: gh-pages
