@@ -55,7 +55,7 @@ jobs:
             <script>hljs.highlightAll();</script>
             </head>
           encoding: 'utf8'
-        env:
-          REPO: self
-          BRANCH: gh-pages
-          MESSAGE: "replaced html files"
+    env:
+      REPO: self
+      BRANCH: gh-pages
+      MESSAGE: "replaced html files"
