@@ -1,6 +1,27 @@
 == Useful basics
 :nofooter:
 :stem: asciimath
+
+
+
+*	Zahlensysteme
+**	Dezimal, Hexadezimal, Dual (Umwandlung, Darstellung, Grundrechenarten) ✓
+**	Darstellung von negativen Zahlen in Binär/Hexadezimal (Singed-Bit, Einer- und Zweierkomplement) ✓ 
+**	Floating-Point Zahlen nach IEEE 754 ✓
+*	Digital Technik
+**	Boolsche Algebra (Grundverknüfpungen) ✓ 
+*	Microcontroller Architektur
+**	Harvard vs. Von Neumann
+**	Speicher (RAM/Flash)
+**	Memory Map Allgemein
+**	Befehlsausführung und Register
+*	STM32G070/STM32F103
+**	Memory Map
+**	Cortex-M0/M3
+**	ARM Assembly
+**	ARM ABI
+
+
 === Hex in Dezimal
 
 
@@ -116,6 +137,12 @@ image:img/DezimalRechnung.png[]
 ==== Subtrahieren
 image:img/binSub.png[]
 
+==== Multiplikation
+image:img/binMul.png[]
+
+==== Dividieren
+image:img/binDiv.png[]
+
 ''''
 === Zweierkomplement
 Möchte man eine Minus Zahlbinär darstellen so wird das Zweierkomplement benutzt.
@@ -126,7 +153,7 @@ Möchte man eine Minus Zahlbinär darstellen so wird das Zweierkomplement benutz
 00001000 = 8 Zahl in binär (positiv)
 11110111 Zahl invertiert
 
-11111000 zweierkomplement = invertierte zahl plus 1 
+11111000 zweierkomplement = invertierte zahl plus 1
 
 11111000
 
@@ -149,4 +176,50 @@ Möchte man eine Minus Zahlbinär darstellen so wird das Zweierkomplement benutz
 
 float = 32 bit
 
+image:img/IEEE.png[]
 
+=== Digital Technik
+==== Bool`sche Algebra
+stem:[(\bar{A}vv\bar{B})^^(\bar{A}vvB)^^(Avv\bar{B})=\bar{A}^^\bar{B}]
+
+image:img/boolische_minimierung.png[]
+
+stem:[vv] == Und +
+stem:[^^] == Oder
+
+
+=== Microcontroller Architektur
+==== Harvard vs Neumann
+===== Neumann
+* Hat nur einen Systembus
+* Besteht aus:
+** Eingabewerk
+** Speicherwerk
+** Rechenwerk
+** Steuerwerk
+**Ausgabewerk
+* Struktur eines Rechners ist unabhänig von der Problemstellung (Also welche Aufgabe er übernehmen soll (Speicherprogramierbar))
+* Im Speicher werden die Programme und Operanden (Daten und Variablen) abgelegt
+* Speicher wird in Fortlaufend nummerierte Zellen von gleicher Größer eingeteilt
+* Daten, Befehle, Adressen und Steuerungen werden binär codiert
+* Ein Programm ist einfach eine Folge von Anweisungen
+
+Es geht darum einen PC universal zu machen (Speicherprogrammierbar)
+
+
+* +Geringer Hardwareaufwand = geringere Kosten
+* +geringerer Speicheraufwand
+* -
+
+
+==== Speicher RAM/Flash
+
+==== Memory map Allgemein
+
+==== Befehlsausführung und Register
+
+=== STM32G070/STM32F03
+==== Memory Map
+==== Cortexy-M0/M3
+==== ARM Assembly 
+==== ARM ABI
