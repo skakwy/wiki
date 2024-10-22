@@ -4,42 +4,31 @@
 === Hex in Dezimal
 
 
-[frame=ends]
+
 |===
 |Dezimal | Hex
 |1
 |1
-
 |2
 |2
-
 |3
 |3
-
 |4
 |4
-
 |5
 |5
-
 |6
 |6
-
 |7
 |7
-
 |8
 |8
-
 |9
 |9
-
 |10
 |a
-
 |11
 |b
-
 |12
 |c
 |13
@@ -48,9 +37,10 @@
 |e
 |15
 |f
-
 |===
+
 Dezimal 18 = Hex 12
+
 
 |===
 |Durch 16 | Quotinet(aufgerundet) | Rest | Index
@@ -58,7 +48,6 @@ Dezimal 18 = Hex 12
 |1
 |2
 |0
-
 |1
 |0
 |1
@@ -71,13 +60,16 @@ Hex 12 = Dezimal 18
 ++++
 (1 * 16^1) + (2 * 16^0) = 18
 
-(underset(n)(x)*16^n) ... + (underset(n)(x)*16^n)
+(x_n*16^n) ... + (x_(n-n)*16^(n-n))
 ++++
 
+n = Anzahl an Hex zahlen zur umrechnung +
+x = Hex zahl in dezimal
+
 Eine hex zahl = 4 bits +
-4 = 0100
+4 = 0100 +
 
-
+''''
 === Dualsytem / Binärsystem
 * Gibt nur zwei Ziffern 0 und 1
 * Ein bit kann nur einen Wert haben (0/1)
@@ -87,7 +79,6 @@ image:img/DezimalRechnung.png[]
 
 |===
 |durch 2 | Rest/bit | wert
-
 |1
 |1
 |64
@@ -110,3 +101,52 @@ image:img/DezimalRechnung.png[]
 |0
 |1
 |===
+
+==== Rechenarten
+==== Addieren:
+----
+    1011
+   +0110
+   10001
+
+    1110
+   +1100
+   11010
+----
+==== Subtrahieren
+image:img/binSub.png[]
+
+''''
+=== Zweierkomplement
+Möchte man eine Minus Zahlbinär darstellen so wird das Zweierkomplement benutzt.
+
+-8:
+
+----
+00001000 = 8 Zahl in binär (positiv)
+11110111 Zahl invertiert
+
+11111000 zweierkomplement = invertierte zahl plus 1 
+
+11111000
+
+00000111 = 7 plus 1 invertiert vom zweierkomplement
+00001000 = 8 Zahl in binär (postiv)
+----
+
+-12:
+
+----
+00001100
+11110011
+11110100
+
+00001011 = 11 | plus 1
+00001100 = 12
+----
+
+=== Fließkommazahlen / IEEE 754
+
+float = 32 bit
+
+
