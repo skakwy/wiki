@@ -197,7 +197,7 @@ stem:[^^] == Oder
 ** Speicherwerk
 ** Rechenwerk
 ** Steuerwerk
-**Ausgabewerk
+** Ausgabewerk
 * Struktur eines Rechners ist unabhänig von der Problemstellung (Also welche Aufgabe er übernehmen soll (Speicherprogramierbar))
 * Im Speicher werden die Programme und Operanden (Daten und Variablen) abgelegt
 * Speicher wird in Fortlaufend nummerierte Zellen von gleicher Größer eingeteilt
@@ -209,17 +209,50 @@ Es geht darum einen PC universal zu machen (Speicherprogrammierbar)
 
 * +Geringer Hardwareaufwand = geringere Kosten
 * +geringerer Speicheraufwand
-* -
+
+
+image:img/neumanVsHarvard.png[]
+
 
 
 ==== Speicher RAM/Flash
+SRAM
+* schneller als DRAM
+* =>kürzere Zugriffszeit
+* Verwendet Transistoren und Latches
+* Vebraucht weniger energie als DRAM
+* Hat weniger Speicher kapazität als DRAM
+
+DRAM
+* Benutzt Kondensatoren und wenige Transistoren
+* Muss refreshed werden um die Daten nicht zu verlieren
+* Langsamere lese Zeit
 
 ==== Memory map Allgemein
+Eine Memory map beschreibt die Nuztzungsweise des Speichers.
+
+Ein MMU sorgt dabei dafür Teile des Speichers zu reservieren um Software in geschützten Bereichen ablaufen lassen zu können. Sonst könnte es sein das laufenede Applikationen sich gegenseitig überschreiben würde.
 
 ==== Befehlsausführung und Register
+Ein Befehlszyklus besteht immer aus drei Operationen die der Prozessor durchläuft. +
+Fech -> Decode -> Execute +
+Dabei gibt es einen Programme Counter, Instruction Register und Accumulator für die Speicherung von einem Wert.
+Der Programme Counter bekommt die Adresse des RAMS welche den ersten/akutellen Schritt an instruction enthält. Dieser wird automatisch erhöht nach Ausführung des Befehls, so dass der nächste Befehel/Instruction
+ausgeführt werden kann. +
+In dem Instruction Register werden die Instructions die Ausgeführt werden sollen geschrieben.
+
+image:img/cpuRamBefehlsZyklus.png[]
+
+Hier sieht man Beispielsweise einen Solchen zyklus. Im Moment ist der Programme counter,das Instruction Register und der Accumulator noch nicht gesetzt. Wird jetzt der Prgramme Counter auf die Adresse der ersten Instruction im RAM gesetzt wird diese erst ins Instruction Register geschrieben, dann decodiert und dann Ausgeführt. So ensteht eine loop in die der Wert der Adresse 6 um die Adresse 7 also um eins erhöht wird.
 
 === STM32G070/STM32F03
 ==== Memory Map
+[%autowidth cols="a,a",frame=none,grid=none,role="center"]
+|===
+| image:img/memoryMap.png[]
+| image:img/memoryMapDetail.png[]
+|===
+
 ==== Cortexy-M0/M3
-==== ARM Assembly 
+==== ARM Assembly
 ==== ARM ABI
