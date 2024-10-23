@@ -245,6 +245,23 @@ image:img/cpuRamBefehlsZyklus.png[]
 
 Hier sieht man Beispielsweise einen Solchen zyklus. Im Moment ist der Programme counter,das Instruction Register und der Accumulator noch nicht gesetzt. Wird jetzt der Prgramme Counter auf die Adresse der ersten Instruction im RAM gesetzt wird diese erst ins Instruction Register geschrieben, dann decodiert und dann Ausgeführt. So ensteht eine loop in die der Wert der Adresse 6 um die Adresse 7 also um eins erhöht wird.
 
+Register sind eine Art Speicher welche dirct in den Prozessor mit eingebaut sind (desswegen ist das auch die Schnellste Art Daten zu speichern). Es wird für die speicherung und manipulation von daten während der Ausführung von instructions benuzt. Ein Register kann eine instruction, eine storage address oder auch irgend eine Art an Daten speichern.
+
+Für die Speicherung werden, innerhalb eines Registers flip-flops benutzt, welche entweder 0 oder 1 representieren. Die Größe Variert, normalerweise, dabei zwischen 8bit und 64 bit. +
+Es gibt viele verschiedene Arten von Registern.
+
+* **Program Counter(PC)** Beinhaltet die Adresse der nächsten instruction
+* **Instruction Register(IR)** Beinhaltet die fetched instructions die Ausgeführt werden
+* **Accumulator (ACC)** Ist ein general-purpose register was für arithmetic und logische operationen benutzt wird um zwischen durch ergebnisse von Rechnungen zu speichern
+* **General-Purpose Register(R0,R1...)** Das sind Register, welche für das Speichern von daten vom Programmierer frei genutzt werden können
+* **Address Register(AR)** Address Register speichern daten addressen für das Zugreifen oder verschieben von Daten in andere Speicher adressen
+* **Stack Pointer(SP)** Zeigt auf den obersten im Stack, was eine region an Speicheradressen ist welche für die temporäre Speicherung von Daten benutzt wird
+* **Data Register(DR)** Speichert Daten die von dem Memory gefetched wurden oder von input/output operations kommen
+* **Status Register/Flags Register(SR)** Die Register enthalten bits welche ein bestimmten Status von operationen zeigen: overflow, zero result.... Dies hilft dabei Programme basierten auf davor ausgeführte Aktionen zu erstellen.
+* **Control Register(CR)** Managet verschiedenste Einstellungen und parameter welche das Verhalten der Cpu verändern.
+
+https://www.totalphase.com/blog/2023/05/what-is-register-in-cpu-how-does-it-work/[was sind Register]
+
 === STM32G070/STM32F03
 ==== Memory Map
 [%autowidth cols="a,a",frame=none,grid=none,role="center"]
@@ -253,6 +270,13 @@ Hier sieht man Beispielsweise einen Solchen zyklus. Im Moment ist der Programme 
 | image:img/memoryMapDetail.png[]
 |===
 
-==== Cortexy-M0/M3
+==== Cortex-M0/M3
+Arm selber stellt keine Prozessoren/Controller her sondern entwickelt nur "IP-Cores". Lizensierte Hersteller ergänzen dann den Core um Speicher und Peripherie. Der Vorteil dadurch ist, dass es viele Prozessoren mit unterschiedlichster Ausstattung verfügbar sind, die alle mit dem selben Befehlssatz programmierbar sind.
+
+Es gibt einen 32 Bit Befehlssatzt aber auch einen Thumb Befehlssatz der bis auf einige Ausnahmen alle Befehle in 16bit codiert. Dadurch wird das Instruction-Set aber auch langsamer ausgeführt. Die Cortex-M controller können ausschließlich Thumb-Instruktionen ausführen.
+
+Der M0 ist eine günstige und Energie-effiziente Variante und hat im Vergleich zu dem M3 einen duetlich kleineren Befehlssatz
+
+Der M3 hingegen ist ein guter allrounder unter den Cortex-Ms
 ==== ARM Assembly
 ==== ARM ABI
