@@ -14,13 +14,14 @@
 **	Harvard vs. Von Neumann
 **	Speicher (RAM/Flash)
 **	Memory Map Allgemein
-**	Befehlsausführung und Register
+**	Befehlsausführung und Register | Nochmal richtig anschauen
 *	STM32G070/STM32F103
-**	Memory Map
+**	Memory Map 
 **	Cortex-M0/M3
 **	ARM Assembly
 **	ARM ABI
 
+exponent nach standard nachschauen
 
 === Hex in Dezimal
 
@@ -278,5 +279,6 @@ Es gibt einen 32 Bit Befehlssatzt aber auch einen Thumb Befehlssatz der bis auf 
 Der M0 ist eine günstige und Energie-effiziente Variante und hat im Vergleich zu dem M3 einen duetlich kleineren Befehlssatz
 
 Der M3 hingegen ist ein guter allrounder unter den Cortex-Ms
+
 ==== ARM Assembly
 ==== ARM ABI
