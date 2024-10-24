@@ -1,0 +1,3 @@
+[submodule "musthave"]
+	path = musthave
+	url = https://github.com/skakwy/musthave.git
